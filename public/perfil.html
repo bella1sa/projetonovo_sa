@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookMatch | Meu Perfil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <nav class="bg-white border-b p-4 mb-8">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-600 font-bold">BookMatch</a>
+            <div class="space-x-6 text-sm font-medium">
+                <a href="index.html" class="hover:text-indigo-600">Explorar</a>
+                <a href="chat.html" class="hover:text-indigo-600">Assistente</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4">
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-8 flex flex-col md:flex-row items-center gap-6">
+            <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-3xl shadow-inner">
+                👤
+            </div>
+            <div class="text-center md:text-left">
+                <h1 class="text-2xl font-extrabold text-slate-800">Leitor Entusiasta</h1>
+                <p class="text-slate-500">Membro desde Maio de 2024</p>
+                <div class="mt-2">
+                    <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100">LIVROS RESENHADOS: <span id="count-resenhas">0</span></span>
+                </div>
+            </div>
+        </section>
+
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
+            Minhas Resenhas
+        </h2>
+
+        <div id="lista-resenhas" class="space-y-4 pb-10">
+            <div id="empty-state" class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                <p class="text-slate-400">Você ainda não escreveu nenhuma resenha.</p>
+                <a href="index.html" class="text-indigo-600 font-bold hover:underline">Explorar livros agora</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    function carregarPerfil() {
+        const resenhasSalvas = JSON.parse(localStorage.getItem('minhasResenhas')) || {};
+        const listaDiv = document.getElementById('lista-resenhas');
+        const ids = Object.keys(resenhasSalvas);
+
+        if (ids.length > 0) {
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('count-resenhas').innerText = ids.length;
+
+            listaDiv.innerHTML = ids.map(id => {
+                const item = resenhasSalvas[id];
+                return `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-4">
+                        <h3 class="font-bold text-lg">${item.titulo}</h3>
+                        <p class="text-slate-600 italic mt-2">"${item.texto}"</p>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">${item.data}</span>
+                            <a href="livro.html?id=${id}" class="text-indigo-600 text-sm font-bold">Ver livro</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+    carregarPerfil();
+</script>
+</body>
+</html>

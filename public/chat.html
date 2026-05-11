@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookMatch | Assistente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Scrollbar personalizada para o chat */
+        #chat-window::-webkit-scrollbar { width: 6px; }
+        #chat-window::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 h-screen flex flex-col">
+
+    <nav class="bg-white border-b p-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-600">BookMatch</a>
+            <div class="space-x-4 text-sm font-medium">
+                <a href="index.html" class="hover:text-indigo-600">Explorar</a>
+                <a href="perfil.html" class="hover:text-indigo-600">Meu Perfil</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col overflow-hidden">
+        
+        <div id="chat-window" class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-y-auto space-y-4">
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xs">AI</div>
+                <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none max-w-[80%]">
+                    <p class="text-sm">Olá! Eu sou o assistente do BookMatch. Me diga um <b>gênero</b> ou <b>autor</b> que você gosta e eu te darei uma sugestão!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-4 flex gap-2">
+            <input id="user-input" type="text" placeholder="Ex: Eu gosto de suspense com detetives..." 
+                class="flex-1 p-4 rounded-2xl border-2 border-white shadow-sm focus:border-indigo-500 outline-none transition-all"
+                onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()" class="bg-indigo-600 text-white px-8 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg active:scale-95">
+                Enviar
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const livrosMock = [
+            { id: 1, titulo: "O Hobbit", autor: "J.R.R. Tolkien", genero: "Fantasia" },
+            { id: 2, titulo: "Duna", autor: "Frank Herbert", genero: "Sci-Fi" },
+            { id: 3, titulo: "O Alquimista", autor: "Paulo Coelho", genero: "Ficção" },
+            { id: 4, titulo: "It: A Coisa", autor: "Stephen King", genero: "Terror" }
+        ];
+
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+
+        function addMessage(text, isUser = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isUser ? "flex justify-end" : "flex items-start gap-3";
+            
+            const content = isUser 
+                ? `<div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] text-sm shadow-md">${text}</div>`
+                : `<div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">AI</div>
+                   <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm">${text}</div>`;
+            
+            msgDiv.innerHTML = content;
+            chatWindow.appendChild(msgDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            userInput.value = '';
+
+            // Simulação de "Pensando..."
+            setTimeout(() => {
+                const busca = text.toLowerCase();
+                const sugestao = livrosMock.find(l => 
+                    busca.includes(l.genero.toLowerCase()) || 
+                    busca.includes(l.autor.toLowerCase())
+                );
+
+                if (sugestao) {
+                    addMessage(`Encontrei algo que você pode gostar: <b>${sugestao.titulo}</b> (${sugestao.autor}). <br><br> <a href="livro.html?id=${sugestao.id}" class="text-indigo-600 underline font-bold">Clique aqui para ver os detalhes</a>`);
+                } else {
+                    addMessage("Humm, não encontrei nada específico sobre isso no momento. Que tal tentar 'Fantasia' ou 'Stephen King'?");
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
