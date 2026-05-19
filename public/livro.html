@@ -2,116 +2,85 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookMatch | Detalhes</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <title>Detalhes do Livro</title>
 </head>
-<body class="bg-slate-50 font-sans text-slate-900">
-
-    <nav class="bg-white border-b shadow-sm p-4">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-xl font-bold text-indigo-600">← Voltar</a>
-            <h2 class="font-medium text-slate-500">Detalhes do Livro</h2>
-            <div class="w-10"></div>
-        </div>
+<body class="bg-slate-50 p-8">
+    <nav class="max-w-4xl mx-auto mb-8">
+        <a href="index.html" class="text-indigo-600 font-bold">← Voltar para a busca</a>
     </nav>
 
-    <main id="loading-screen" class="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p class="text-slate-500 animate-pulse">Buscando informações do livro...</p>
-    </main>
-
-    <main id="main-content" class="max-w-4xl mx-auto px-4 py-10 hidden">
-        <div class="flex flex-col md:flex-row gap-10 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-            
-            <div class="w-full md:w-1/3 flex justify-center">
-                <img id="book-capa" src="" alt="Capa" class="w-full max-w-[250px] rounded-2xl shadow-lg border">
+    <main class="max-w-4xl mx-auto bg-white p-8 rounded-3xl shadow-sm border">
+        <div class="flex flex-col md:flex-row gap-8">
+            <img id="book-capa" src="https://via.placeholder.com/200x300" class="w-48 rounded-lg shadow">
+            <div>
+                <h1 id="book-titulo" class="text-3xl font-bold text-slate-800">Carregando...</h1>
+                <p id="book-autor" class="text-xl text-slate-500 mb-4"></p>
+                <div id="book-sinopse" class="text-slate-600 text-sm leading-relaxed mb-6"></div>
             </div>
+        </div>
 
-            <div class="w-full md:w-2/3">
-                <span id="book-genero" class="text-indigo-600 font-bold uppercase tracking-widest text-xs"></span>
-                <h1 id="book-titulo" class="text-3xl font-extrabold mt-2 mb-1 text-slate-800 tracking-tight"></h1>
-                <p id="book-autor" class="text-xl text-slate-500 mb-6"></p>
-                
-                <h3 class="font-bold text-lg mb-2">Sinopse</h3>
-                <div id="book-sinopse" class="text-slate-600 leading-relaxed mb-8 max-h-60 overflow-y-auto pr-2 text-sm">
-                    </div>
-
-                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                    <h3 class="font-bold mb-3">📝 Sua Resenha</h3>
-                    <textarea id="comentario" class="w-full p-4 rounded-xl border border-slate-300 focus:ring-2 ring-indigo-500 outline-none h-32 resize-none text-sm" placeholder="Escreva aqui..."></textarea>
-                    <button onclick="salvarResenha()" class="mt-4 w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all">
-                        Salvar Minha Resenha
-                    </button>
-                </div>
-            </div>
+        <div class="mt-10 border-t pt-8">
+            <h3 class="font-bold text-lg mb-4">Sua Resenha</h3>
+            <textarea id="comentario" class="w-full border p-4 rounded-xl h-32 outline-none focus:ring-2 ring-indigo-500" placeholder="O que achou deste livro?"></textarea>
+            <button onclick="salvarResenha()" class="mt-4 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all">
+                Salvar no Servidor
+            </button>
         </div>
     </main>
 
     <script>
-        // 1. Pegar o ID da URL
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id');
 
-        async function loadBookDetails() {
-            if (!bookId) {
-                document.getElementById('loading-screen').innerText = "Erro: Nenhum livro selecionado.";
-                return;
-            }
-
+        // Carregar os dados do Google
+        async function carregarDados() {
+            if (!bookId) return;
             try {
-                const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
-                if (!response.ok) throw new Error("Livro não encontrado");
-                
-                const data = await response.json();
+                const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
+                const data = await res.json();
                 const info = data.volumeInfo;
 
-                // Preencher dados com verificações de segurança (Fallback)
-                document.getElementById('book-titulo').innerText = info.title || "Título Indisponível";
-                document.getElementById('book-autor').innerText = info.authors ? info.authors.join(', ') : "Autor Desconhecido";
-                document.getElementById('book-genero').innerText = info.categories ? info.categories[0] : "Geral";
-                
-                // Tratar a sinopse que às vezes vem com tags HTML
-                const sinopseCrua = info.description || "Este livro não possui sinopse disponível.";
-                document.getElementById('book-sinopse').innerHTML = sinopseCrua;
-
-                // Tratar imagem
-                const capaUrl = info.imageLinks ? info.imageLinks.thumbnail.replace('http:', 'https:') : 'https://via.placeholder.com/300x450?text=Sem+Capa';
-                document.getElementById('book-capa').src = capaUrl;
-
-                // Mostrar conteúdo e esconder loading
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
-
-                // Carregar resenha antiga se houver
-                const resenhas = JSON.parse(localStorage.getItem('minhasResenhas')) || {};
-                if (resenhas[bookId]) {
-                    document.getElementById('comentario').value = resenhas[bookId].texto || resenhas[bookId];
-                }
-
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loading-screen').innerHTML = `<p class="text-red-500">Erro ao carregar dados do Google Books. Verifique sua conexão.</p>`;
+                document.getElementById('book-titulo').innerText = info.title;
+                document.getElementById('book-autor').innerText = info.authors?.join(', ') || 'Autor desconhecido';
+                document.getElementById('book-sinopse').innerHTML = info.description || 'Sem sinopse.';
+                document.getElementById('book-capa').src = info.imageLinks?.thumbnail.replace('http:', 'https:') || '';
+            } catch (e) {
+                console.error("Erro ao buscar dados do Google");
             }
         }
 
-        function salvarResenha() {
+        // SALVAR NO BACKEND (Express)
+        async function salvarResenha() {
             const texto = document.getElementById('comentario').value;
             const titulo = document.getElementById('book-titulo').innerText;
 
-            if (!texto.trim()) return alert("Digite algo!");
+            if (!texto.trim()) return alert("Escreva algo antes de salvar!");
 
-            let resenhas = JSON.parse(localStorage.getItem('minhasResenhas')) || {};
-            resenhas[bookId] = {
-                texto: texto,
+            const dadosParaEnviar = {
+                bookId: bookId,
                 titulo: titulo,
+                texto: texto,
                 data: new Date().toLocaleDateString()
             };
 
-            localStorage.setItem('minhasResenhas', JSON.stringify(resenhas));
-            alert("Resenha salva com sucesso!");
+            try {
+                const response = await fetch('/api/resenhas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosParaEnviar)
+                });
+
+                if (response.ok) {
+                    alert("Sucesso! Resenha salva no arquivo resenhas.json");
+                    window.location.href = 'perfil.html';
+                }
+            } catch (error) {
+                alert("Erro: O servidor (node server.js) está rodando?");
+            }
         }
 
-        window.onload = loadBookDetails;
+        carregarDados();
     </script>
 </body>
 </html>

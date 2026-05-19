@@ -45,32 +45,39 @@
         </div>
     </main>
 
-    <script>
-    function carregarPerfil() {
-        const resenhasSalvas = JSON.parse(localStorage.getItem('minhasResenhas')) || {};
-        const listaDiv = document.getElementById('lista-resenhas');
-        const ids = Object.keys(resenhasSalvas);
+   <script>
+    async function carregarPerfil() {
+        try {
+            // Busca os dados da nossa API Express
+            const response = await fetch('/api/resenhas');
+            const resenhasSalvas = await response.json();
+            
+            const listaDiv = document.getElementById('lista-resenhas');
+            const ids = Object.keys(resenhasSalvas);
 
-        if (ids.length > 0) {
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('count-resenhas').innerText = ids.length;
+            if (ids.length > 0) {
+                document.getElementById('empty-state').classList.add('hidden');
+                document.getElementById('count-resenhas').innerText = ids.length;
 
-            listaDiv.innerHTML = ids.map(id => {
-                const item = resenhasSalvas[id];
-                return `
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-4">
-                        <h3 class="font-bold text-lg">${item.titulo}</h3>
-                        <p class="text-slate-600 italic mt-2">"${item.texto}"</p>
-                        <div class="mt-4 flex justify-between items-center">
-                            <span class="text-xs text-slate-400">${item.data}</span>
-                            <a href="livro.html?id=${id}" class="text-indigo-600 text-sm font-bold">Ver livro</a>
+                listaDiv.innerHTML = ids.map(id => {
+                    const item = resenhasSalvas[id];
+                    return `
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-4">
+                            <h3 class="font-bold text-lg text-indigo-600">${item.titulo}</h3>
+                            <p class="text-slate-600 italic mt-2">"${item.texto}"</p>
+                            <div class="mt-4 flex justify-between items-center text-xs text-slate-400">
+                                <span>Postado em: ${item.data}</span>
+                                <a href="livro.html?id=${id}" class="font-bold text-indigo-400 hover:text-indigo-600">Ver livro</a>
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
+        } catch (error) {
+            console.error("Erro ao carregar perfil:", error);
         }
     }
-    carregarPerfil();
+    window.onload = carregarPerfil;
 </script>
 </body>
 </html>
