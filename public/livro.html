@@ -29,58 +29,56 @@
         </div>
     </main>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const bookId = params.get('id');
+   <script>
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('id');
 
-        // Carregar os dados do Google
-        async function carregarDados() {
-            if (!bookId) return;
-            try {
-                const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
-                const data = await res.json();
-                const info = data.volumeInfo;
+    async function carregarDados() {
+        if (!bookId) return;
+        try {
+            // Buscando o livro específico do nosso backend
+            const res = await fetch(`/api/livros/${bookId}`);
+            const livro = await res.json();
 
-                document.getElementById('book-titulo').innerText = info.title;
-                document.getElementById('book-autor').innerText = info.authors?.join(', ') || 'Autor desconhecido';
-                document.getElementById('book-sinopse').innerHTML = info.description || 'Sem sinopse.';
-                document.getElementById('book-capa').src = info.imageLinks?.thumbnail.replace('http:', 'https:') || '';
-            } catch (e) {
-                console.error("Erro ao buscar dados do Google");
-            }
+            document.getElementById('book-titulo').innerText = livro.titulo;
+            document.getElementById('book-autor').innerText = livro.autor;
+            document.getElementById('book-sinopse').innerHTML = livro.sinopse;
+            document.getElementById('book-capa').src = livro.capa;
+        } catch (e) {
+            console.error("Erro ao buscar dados do livro no servidor local");
         }
+    }
 
-        // SALVAR NO BACKEND (Express)
-        async function salvarResenha() {
-            const texto = document.getElementById('comentario').value;
-            const titulo = document.getElementById('book-titulo').innerText;
+    async function salvarResenha() {
+        const texto = document.getElementById('comentario').value;
+        const titulo = document.getElementById('book-titulo').innerText;
 
-            if (!texto.trim()) return alert("Escreva algo antes de salvar!");
+        if (!texto.trim()) return alert("Escreva algo antes de salvar!");
 
-            const dadosParaEnviar = {
-                bookId: bookId,
-                titulo: titulo,
-                texto: texto,
-                data: new Date().toLocaleDateString()
-            };
+        const dadosParaEnviar = {
+            bookId: bookId,
+            titulo: titulo,
+            texto: texto,
+            data: new Date().toLocaleDateString()
+        };
 
-            try {
-                const response = await fetch('/api/resenhas', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosParaEnviar)
-                });
+        try {
+            const response = await fetch('/api/resenhas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosParaEnviar)
+            });
 
-                if (response.ok) {
-                    alert("Sucesso! Resenha salva no arquivo resenhas.json");
-                    window.location.href = 'perfil.html';
-                }
-            } catch (error) {
-                alert("Erro: O servidor (node server.js) está rodando?");
+            if (response.ok) {
+                alert("Sucesso! Resenha salva no arquivo resenhas.json");
+                window.location.href = 'perfil.html';
             }
+        } catch (error) {
+            alert("Erro ao conectar ao servidor.");
         }
+    }
 
-        carregarDados();
-    </script>
+    carregarDados();
+</script>
 </body>
 </html>
