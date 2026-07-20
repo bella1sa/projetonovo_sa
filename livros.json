@@ -1,0 +1,66 @@
+[
+  {
+    "id": "hobbit",
+    "titulo": "O Hobbit",
+    "autor": "J.R.R. Tolkien",
+    "genero": "Fantasia",
+    "sinopse": "Bilbo Bolseiro é um hobbit que leva uma vida confortável e pacata. Tudo muda quando o mago Gandalf e treze anões o levam em uma jornada para recuperar um tesouro guardado pelo dragão Smaug.",
+    "capa": "https://m.media-amazon.com/images/I/91M9tPvp79L._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "duna",
+    "titulo": "Duna",
+    "autor": "Frank Herbert",
+    "genero": "Sci-Fi",
+    "sinopse": "Localizado no deserto épico de Arrakis, Duna conta a história de Paul Atreides, um jovem brilhante e talentoso nascido para um grande destino além de sua compreensão.",
+    "capa": "https://m.media-amazon.com/images/I/81S6P-ZpS9L._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "alquimista",
+    "titulo": "O Alquimista",
+    "autor": "Paulo Coelho",
+    "genero": "Ficção",
+    "sinopse": "O romance narra a jornada de Santiago, um jovem pastor espanhol que viaja para o Egito em busca de um tesouro escondido nas pirâmides.",
+    "capa": "https://m.media-amazon.com/images/I/81p-76Yv9+L._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "it-coisa",
+    "titulo": "It: A Coisa",
+    "autor": "Stephen King",
+    "genero": "Terror",
+    "sinopse": "Um grupo de crianças enfrentam seus maiores medos quando um monstro que toma a forma de um palhaço começa a caçar na cidade de Derry e aterrorizar a todos.",
+    "capa": "https://m.media-amazon.com/images/I/71dNs7vG8vL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "pequeno-principe",
+    "titulo": "O Pequeno Príncipe",
+    "autor": "Antoine de Saint-Exupéry",
+    "genero": "Clássico",
+    "sinopse": "Um piloto cai no deserto do Saara e encontra um jovem príncipe de um asteroide distante. Uma história profunda sobre a vida, o amor e a amizade.",
+    "capa": "https://m.media-amazon.com/images/I/71++I3S9f0L._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "sherlock",
+    "titulo": "As Aventuras de Sherlock Holmes",
+    "autor": "Arthur Conan Doyle",
+    "genero": "Mistério",
+    "sinopse": "Uma coletânea de histórias onde o detetive mais famoso do mundo e seu fiel parceiro Dr. Watson desvendam os crimes mais misteriosos de Londres.",
+    "capa": "https://m.media-amazon.com/images/I/71YfU8Q1nFL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "dracula",
+    "titulo": "Drácula",
+    "autor": "Bram Stoker",
+    "genero": "Terror",
+    "sinopse": "O clássico romance epistolar que narra a tentativa do Conde Drácula de se mudar da Transilvânia para a Inglaterra a fim de encontrar sangue novo e espalhar a maldição dos mortos-vivos.",
+    "capa": "https://m.media-amazon.com/images/I/91N+B89K3PL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": "orgulho-preconceito",
+    "titulo": "Orgulho e Preconceito",
+    "autor": "Jane Austen",
+    "genero": "Romance",
+    "sinopse": "A história gira em torno de Elizabeth Bennet e Fitzwilliam Darcy, que precisam superar o orgulho e os preconceitos sociais para encontrar o verdadeiro amor na Inglaterra rural do século XIX.",
+    "capa": "https://m.media-amazon.com/images/I/816nS+2wAnL._AC_UF1000,1000_QL80_.jpg"
+  }
+]

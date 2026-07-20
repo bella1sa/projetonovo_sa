@@ -6,26 +6,30 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 const DATA_FILE = path.join(__dirname, 'resenhas.json');
+const LIVROS_FILE = path.join(__dirname, 'livros.json'); // Nosso arquivo com a lista pronta!
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Nosso próprio banco de dados de livros (Adeus bloqueio do Google!)
-const livrosLocais = [
-    { id: "1", titulo: "O Hobbit", autor: "J.R.R. Tolkien", genero: "Fantasia", sinopse: "Bilbo Bolseiro é um hobbit que leva uma vida confortável e pacata. Tudo muda quando o mago Gandalf e treze anões o levam em uma jornada para recuperar um tesouro guardado pelo dragão Smaug.", capa: "/imagens/hobbit.jpg" },
-    { id: "2", titulo: "Duna", autor: "Frank Herbert", genero: "Sci-Fi", sinopse: "Localizado no deserto épico de Arrakis, Duna conta a história de Paul Atreides, um jovem brilhante e talentoso nascido para um grande destino além de sua compreensão.", capa: "/imagens/duna.jpg" },
-    { id: "3", titulo: "O Alquimista", autor: "Paulo Coelho", genero: "Ficção", sinopse: "O romance narra a jornada de Santiago, um jovem pastor espanhol que viaja para o Egito em busca de um tesouro escondido nas pirâmides.", capa: "/imagens/alquimista.jpg" },
-    { id: "4", titulo: "It: A Coisa", autor: "Stephen King", genero: "Terror", sinopse: "Um grupo de crianças enfrentam seus maiores medos quando um monstro que toma a forma de um palhaço começa a caçar na cidade de Derry.", capa: "/imagens/it.jpg" }
-];
+// Função auxiliar para ler os livros do JSON
+function obterLivrosLocais() {
+    try {
+        const data = fs.readFileSync(LIVROS_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (e) {
+        console.error("Erro ao ler o arquivo livros.json, usando lista vazia.");
+        return [];
+    }
+}
 
-// Rota para a Home buscar os livros do nosso servidor
+// Rota para a Home buscar os livros (com sistema de busca filtrando o JSON)
 app.get('/api/livros', (req, res) => {
     const busca = req.query.q ? req.query.q.toLowerCase() : '';
+    const meusLivros = obterLivrosLocais();
     
-    // Se o usuário digitou algo na busca, filtramos aqui no backend
     if (busca) {
-        const filtrados = livrosLocais.filter(l => 
+        const filtrados = meusLivros.filter(l => 
             l.titulo.toLowerCase().includes(busca) || 
             l.autor.toLowerCase().includes(busca) ||
             l.genero.toLowerCase().includes(busca)
@@ -33,12 +37,13 @@ app.get('/api/livros', (req, res) => {
         return res.json(filtrados);
     }
     
-    res.json(livrosLocais);
+    res.json(meusLivros);
 });
 
-// Rota para buscar os detalhes de UM livro específico pelo ID
+// Rota para buscar os detalhes de UM livro específico pelo ID próprio
 app.get('/api/livros/:id', (req, res) => {
-    const livro = livrosLocais.find(l => l.id === req.params.id);
+    const meusLivros = obterLivrosLocais();
+    const livro = meusLivros.find(l => l.id === req.params.id);
     if (!livro) return res.status(404).json({ erro: "Livro não encontrado" });
     res.json(livro);
 });
@@ -75,5 +80,5 @@ app.get('/api/resenhas', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando liso em http://localhost:${PORT}`);
+    console.log(`Servidor rodando com banco de dados próprio em http://localhost:${PORT}`);
 });
